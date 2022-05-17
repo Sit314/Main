@@ -1,3 +1,4 @@
+#include <chrono>
 #include <iostream>
 #include <math.h>
 #include <vector>
@@ -51,4 +52,26 @@ bool isPrime(int n)
             return false;
 
     return true;
+}
+
+template <
+    class result_t = chrono::milliseconds,
+    class clock_t = chrono::steady_clock,
+    class duration_t = chrono::milliseconds>
+auto since(chrono::time_point<clock_t, duration_t> const& start)
+{
+    return chrono::duration_cast<result_t>(clock_t::now() - start);
+}
+
+void comma(unsigned long long n)
+{
+    const unsigned int THOUSAND = 1000;
+
+    if (n < THOUSAND)
+        cout << n;
+    else {
+        int remainder = n % THOUSAND;
+        comma(n / THOUSAND);
+        cout << ',' << remainder;
+    }
 }
