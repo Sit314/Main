@@ -16,7 +16,7 @@ public:
     int size() const;
 
     Queue filter(const Queue& queue, const bool (*function)(T)) const;
-    void transform(Queue& queue, const void (*function)(T&)) const;
+    void transform(Queue& queue, const void (*function)(T&));
 
     Queue(Queue const& value);
     ~Queue();
@@ -49,12 +49,7 @@ Queue<T>::Queue()
 template <class T>
 void Queue<T>::pushBack(const T& value)
 {
-    Node* append;
-    try {
-        append = new Node;
-    } catch (std::bad_alloc& e) {
-        throw std::bad_alloc();
-    }
+    Node* append = new Node;
     append->data = value;
     append->next = nullptr;
 
@@ -100,6 +95,81 @@ int Queue<T>::size() const
         size++;
     }
     return size;
+}
+
+template <class T>
+Queue<T> Queue<T>::filter(const Queue<T>& queue, const bool (*function)(T)) const
+{
+    Queue<T> out();
+    for (Queue<T>::Iterator i = begin(); i != end(); ++i) {
+        if (function(*i)) {
+            out.pushBack(*i);
+        }
+    }
+    return out;
+}
+
+template <class T>
+void Queue<T>::transform(Queue<T>& queue, const void (*function)(T&))
+{
+    for (Queue<T>::Iterator i = begin(); i != end(); ++i) {
+        *i = function(*i);
+    }
+}
+
+template <class T>
+class Queue<T>::Iterator {
+
+    Iterator& operator++();
+    bool operator!=(const Iterator& other) const;
+    const T& operator*() const;
+
+    class InvalidOperation {
+    };
+
+private:
+    Node* m_current;
+};
+
+template <class T>
+Queue<T>::Iterator& Queue<T>::Iterator::operator++()
+{
+    if (*this == nullptr) {
+        throw InvalidOperation();
+    }
+    m_current = m_current->next;
+    return *this;
+}
+
+template <class T>
+bool Queue<T>::Iterator::operator!=(const Queue<T>::Iterator& other) const
+{
+    return m_current->data != other.m_current->data || m_current->next != other.m_current->next;
+}
+
+template <class T>
+const T& Queue<T>::Iterator::operator*() const
+{
+    if (*this == nullptr) {
+        throw InvalidOperation();
+    }
+    return m_current->data;
+}
+
+template <class T>
+Queue<T>::Iterator Queue<T>::begin() const
+{
+    Iterator out();
+    out.m_current = m_front;
+    return out;
+}
+
+template <class T>
+Queue<T>::Iterator Queue<T>::end() const
+{
+    Iterator out();
+    out.m_current = m_rear->next;
+    return out;
 }
 
 #endif // EX3_QUEUE_H
