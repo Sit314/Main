@@ -16,22 +16,9 @@ public:
     void popFront();
     int size() const;
 
-    // Queue filter(const Queue& queue, const bool (*function)(T)) const;
-    // void transform(Queue& queue, const void (*function)(T&));
-
     Queue(Queue const& queue);
     ~Queue();
     Queue& operator=(const Queue& queue);
-
-    void print()
-    {
-        Node* a = m_front;
-        while (a != nullptr) {
-            std::cout << a->data << ", ";
-            a = a->next;
-        }
-        std::cout << "END\n";
-    }
 
     class Iterator;
     class ConstIterator;
@@ -276,8 +263,11 @@ const T& Queue<T>::ConstIterator::operator*() const
 
 template <class T>
 Queue<T>::ConstIterator::ConstIterator(Node* node)
-    : m_current(node)
 {
+    const T& constData = node->data;
+    m_current->data = constData;
+    const Node* constNext = node->next;
+    m_current->next = constNext;
 }
 
 // REST OF QUEUE
