@@ -39,6 +39,8 @@ private:
     };
     Node* m_front;
     Node* m_rear;
+
+    void deleteList();
 };
 
 template <class T>
@@ -103,9 +105,9 @@ template <class T>
 Queue<T> filter(const Queue<T>& queue, bool (*function)(T))
 {
     Queue<T> out;
-    for (typename Queue<T>::ConstIterator i = queue.begin(); i != queue.end(); ++i) {
-        if (function(*i)) {
-            out.pushBack(*i);
+    for (T t : queue) {
+        if (function(t)) {
+            out.pushBack(t);
         }
     }
     return out;
@@ -122,17 +124,16 @@ void transform(Queue<T>& queue, void (*function)(T&))
 template <class T>
 Queue<T>::Queue(Queue const& queue)
 {
-    for (typename Queue<T>::ConstIterator i = queue.begin(); i != queue.end(); ++i) {
-        pushBack(*i);
+    m_front = m_rear = nullptr;
+    for (T t : queue) {
+        pushBack(t);
     }
 }
 
 template <class T>
 Queue<T>::~Queue<T>()
 {
-    while (m_front != nullptr) {
-        popFront();
-    }
+    deleteList();
 }
 
 template <class T>
@@ -141,10 +142,11 @@ Queue<T>& Queue<T>::operator=(const Queue<T>& queue)
     if (this == &queue) {
         return *this;
     }
-    this.~Queue();
+    deleteList();
     for (typename Queue<T>::ConstIterator i = queue.begin(); i != queue.end(); ++i) {
         pushBack(*i);
     }
+    return *this;
 }
 
 // ITERATOR CODE
@@ -185,7 +187,7 @@ bool Queue<T>::Iterator::operator!=(const Queue<T>::Iterator& other) const
     if (m_current == nullptr && other.m_current == nullptr) {
         return false;
     }
-    if (m_current == nullptr ^ other.m_current == nullptr) {
+    if ((m_current == nullptr) ^ (other.m_current == nullptr)) {
         return true;
     }
     return m_current->data != other.m_current->data || m_current->next != other.m_current->next;
@@ -244,7 +246,7 @@ bool Queue<T>::ConstIterator::operator!=(const Queue<T>::ConstIterator& other) c
     if (m_current == nullptr && other.m_current == nullptr) {
         return false;
     }
-    if (m_current == nullptr ^ other.m_current == nullptr) {
+    if ((m_current == nullptr) ^ (other.m_current == nullptr)) {
         return true;
     }
     return m_current->data != other.m_current->data || m_current->next != other.m_current->next;
@@ -290,6 +292,14 @@ template <class T>
 typename Queue<T>::ConstIterator Queue<T>::end() const
 {
     return ConstIterator(nullptr);
+}
+
+template <class T>
+void Queue<T>::deleteList()
+{
+    while (m_front != nullptr) {
+        popFront();
+    }
 }
 
 #endif // EX3_QUEUE_H
