@@ -10,17 +10,19 @@ struct Pair {
     bool marked;
 };
 
-void printUnmarked(Pair a[]) {
+void printUnmarked(Pair a[])
+{
     cout << "[ ";
     for (int i = 0; i < N; i++)
         if (!a[i].marked)
             cout << a[i].n << ((i != N - 1) ? ", " : " ]\n");
 }
 
-int main() {
+int main()
+{
     Pair numbers[N];
     for (int i = 0; i < N; i++)
-        numbers[i] = {i + 1, false};
+        numbers[i] = { i + 1, false };
 
     cout << "All Numbers:\n\t";
     printUnmarked(numbers);
