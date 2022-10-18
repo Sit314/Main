@@ -1,10 +1,10 @@
 #include <time.h>
 
 #include <iostream>
+
 using namespace std;
 
-int main(void)
-{
+int main() {
     clock_t tStart = clock();
     int* a = new int[(int)3e8];
     for (int i = 0; i < (int)3e8; i++)
