@@ -1,0 +1,11 @@
+#!/bin/sh
+
+g++ -std=c++14 -O2 solver.cpp -o solver
+
+if [ $# -eq 1 ]; then 
+	./solver < $1
+else
+	./solver
+fi
+
+rm solver

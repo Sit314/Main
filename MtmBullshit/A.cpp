@@ -1,10 +1,8 @@
 #include "A.h"
 
-#include <exception>
-#include <iostream>
-using namespace std;
-
-void A::f() {}
+static class A x("x");
+static A y("y");
+A z("z");
 
 void convert(double d) {
     static int i = (int)d;
@@ -21,7 +19,10 @@ void inc(int i) {
 }
 
 int main() {
-    for (int i = 0; i < 5; i++)
-        inc(rand());
+    // for (int i = 0; i < 5; i++)
+    //     inc(rand());
+    x.f();
+    y.f();
+    z.f();
     return 0;
 }
