@@ -66,6 +66,8 @@
     "unordered_map": "cpp",
     "xhash": "cpp",
     "deque": "cpp",
-    "fstream": "cpp"
+    "fstream": "cpp",
+    "random": "cpp",
+    "complex": "cpp"
   }
 }
