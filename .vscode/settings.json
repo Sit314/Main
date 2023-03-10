@@ -1,0 +1,14 @@
+{
+  "files.associations": {
+    "*.h": "cpp",
+    "iostream": "cpp",
+    "array": "cpp",
+    "vector": "cpp",
+    "xstring": "cpp",
+    "xutility": "cpp",
+    "random": "cpp",
+    "iosfwd": "cpp",
+    "limits": "cpp",
+    "complex": "cpp"
+  }
+}
