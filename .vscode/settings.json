@@ -1,6 +1,8 @@
 {
   "files.associations": {
     "*.h": "cpp",
+    "ex2myTest": "asm-intel-x86-generic",
+    "*.S": "asm-intel-x86-generic",
     "iostream": "cpp",
     "array": "cpp",
     "vector": "cpp",
@@ -9,6 +11,11 @@
     "random": "cpp",
     "iosfwd": "cpp",
     "limits": "cpp",
-    "complex": "cpp"
-  }
+    "complex": "cpp",
+    "utility": "cpp"
+  },
+  "[python]": {
+    "editor.defaultFormatter": "ms-python.autopep8"
+  },
+  "python.formatting.provider": "none",
 }
