@@ -2,11 +2,13 @@
 
 #define pi 3.1415926535897932384626433
 
-double f(double x) {
+double f(double x)
+{
     return x < 0 ? -x : x;
 }
 
-int main() {
+int main()
+{
     int besti = -1, bestj = -1;
     double bestdiff = 1000;
 
