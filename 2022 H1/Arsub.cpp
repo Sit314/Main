@@ -1,5 +1,6 @@
 #include <time.h>
 
+#include <array>
 #include <iostream>
 #include <limits>
 
@@ -11,6 +12,5 @@ int main() {
     for (int i = 0; i < (int)3e8; i++)
         a[i] = rand() % 100;
     cout << "Time taken: " << (double)(clock() - tStart) / CLOCKS_PER_SEC << "s\n ";
-    numeric_limits<double>::infinity();
     return 0;
 }
