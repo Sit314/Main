@@ -1,0 +1,14 @@
+{
+    "files.associations": {
+        "*.h": "cpp",
+        "ex2myTest": "asm-intel-x86-generic",
+        "*.S": "asm-intel-x86-generic",
+        "iostream": "cpp",
+        "ostream": "cpp",
+        "atomic": "cpp"
+    },
+    "[python]": {
+        "editor.defaultFormatter": "ms-python.black-formatter"
+    },
+    "python.formatting.provider": "none"
+}
