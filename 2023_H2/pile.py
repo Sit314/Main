@@ -1,7 +1,9 @@
 from tkinter import *
 import numpy as np
+import threading
+import random
 
-N, zoom = 201, 4
+N, zoom = 101, 8
 
 
 class Sandpile:
@@ -27,17 +29,29 @@ class Sandpile:
         self.grid[0] = self.grid[-1] = 0
         self.grid[:, 0] = self.grid[:, -1] = 0
 
+    def redraw_elem(self, elem_x, elem_y):
+        # elem_x = elem_x[0]
+        # elem_y = elem_y[0]
+        p = self.grid[elem_x, elem_y]
+
+        x, y = zoom * elem_x, zoom * elem_y
+        c.create_rectangle(x, y, x + zoom, y + zoom, outline="", fill=colors[min(p, 4)])
+
     def run(self):
         from time import time
 
         start_time = time()
         iterations = 0
-        topple = self.topple
-        where = np.where
 
         while np.max(self.grid) >= self.max_grains:
-            elem_x, elem_y = where(self.grid >= self.max_grains)
-            topple(elem_x, elem_y)
+            elem_x, elem_y = np.where(self.grid >= self.max_grains)
+            for x, y in zip(elem_x, elem_y):
+                self.topple(x, y)
+                self.redraw_elem(x, y)
+                self.redraw_elem(x - 1, y)
+                self.redraw_elem(x + 1, y)
+                self.redraw_elem(x, y - 1)
+                self.redraw_elem(x, y + 1)
             iterations += 1
 
         print(f"{iterations} iterations {time() - start_time} seconds")
@@ -57,7 +71,7 @@ class Sandpile:
             print("ValueError: sandpile grid sizes must match")
 
 
-colors = ["#b3cde0", "#6497b1", "#005b96", "#03396c", "#011f4b"]
+colors = ["#b3cde0", "#6497b1", "#005b96", "#03396c", "#011f4b"]  # 0, 1, 2, 3, >=4
 
 root = Tk()
 root.resizable(False, False)
@@ -67,13 +81,16 @@ c = Canvas(
 )
 c.pack()
 
-pile = Sandpile(rows=N, cols=N)
+pile = Sandpile(N, N)
 
-pile.set_sand(N // 2, N // 2, 2**16)
+# pile.set_sand(N // 2, N // 2, 2**10)
+for _ in range(30):
+    pile.set_sand(
+        random.randint(10, N - 10),
+        random.randint(10, N - 10),
+        2 ** random.randint(8, 12),
+    )
 
-print("Running...")
-pile.run()
-print("Run finished")
 grid = pile.get_pile()
 
 print(grid)
@@ -82,8 +99,12 @@ for i in range(N):
     for j in range(N):
         x, y = zoom * i, zoom * j
         c.create_rectangle(
-            x, y, x + zoom, y + zoom, outline="", fill=colors[grid[i][j]]
+            x, y, x + zoom, y + zoom, outline="", fill=colors[min(grid[i][j], 4)]
         )
 
-print("Render finised")
+print("Running...")
+thread = threading.Thread(target=pile.run)
+thread.start()
+print("Run finished")
+
 root.mainloop()
