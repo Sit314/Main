@@ -2,25 +2,21 @@
 using namespace std;
 
 class A {
-protected:
-    A()
-    {
+   protected:
+    A() {
         cout << "A C'tor\n";
     }
-    ~A()
-    {
+    ~A() {
         cout << "A D'tor\n";
     }
 };
 
 class C {
-public:
-    C()
-    {
+   public:
+    C() {
         cout << "C C'tor\n";
     }
-    ~C()
-    {
+    ~C() {
         cout << "C D'tor\n";
     }
 };
@@ -28,19 +24,16 @@ public:
 class B : public A {
     C c;
 
-public:
-    B()
-    {
+   public:
+    B() {
         cout << "B C'tor\n";
     }
-    ~B()
-    {
+    ~B() {
         cout << "B D'tor\n";
     }
 };
 
-int main()
-{
+int main() {
     B b;
     cout << "==========\n";
     return 0;

@@ -1,7 +1,9 @@
+import random
+
 import numpy as np
 from graphics import GraphWin, Point, Rectangle, Text
 
-N, TILE = 5, 100
+N, TILE = 5, 120
 grid = np.zeros((N, N), list)
 
 win = GraphWin("Lights Out", N * TILE, N * TILE)
@@ -9,9 +11,9 @@ win = GraphWin("Lights Out", N * TILE, N * TILE)
 for x in range(N):
     for y in range(N):
         r = Rectangle(Point(x * TILE, y * TILE), Point((x + 1) * TILE, (y + 1) * TILE))
-        r.setFill("#D9F1FF")
+        grid[x, y] = [bool(random.getrandbits(1)), r]
+        r.setFill("#004788" if grid[x, y][0] else "#D9F1FF")
         r.draw(win)
-        grid[x, y] = [False, r]
 
 
 def flip(x, y):
