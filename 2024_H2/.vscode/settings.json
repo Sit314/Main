@@ -1,0 +1,9 @@
+{
+    "files.associations": {
+        "*.h": "cpp",
+        "ex2myTest": "asm-intel-x86-generic",
+        "*.S": "asm-intel-x86-generic",
+        "iostream": "cpp",
+        "variant": "cpp"
+    }
+}
