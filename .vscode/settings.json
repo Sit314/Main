@@ -5,10 +5,11 @@
     "*.S": "asm-intel-x86-generic",
     "iostream": "cpp",
     "ostream": "cpp",
-    "atomic": "cpp"
+    "atomic": "cpp",
+    "algorithm": "cpp"
   },
   "[python]": {
-    "editor.defaultFormatter": "ms-python.black-formatter",
+    "editor.defaultFormatter": "charliermarsh.ruff",
     "editor.formatOnSave": true
   }
 }

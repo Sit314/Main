@@ -6,7 +6,7 @@ import numpy as np
 from PIL import Image, ImageDraw, ImageFont
 
 
-def char_to_pixels(text, path="arialbd.ttf", fontsize=14):
+def char_to_pixels(text, path="calibri.ttf", fontsize=14):
     font = ImageFont.truetype(path, fontsize)
     # w, h = font.getsize(text) # [for pillow version 9.5.0]
     l, t, r, b = font.getbbox(text)
@@ -30,18 +30,23 @@ def char_to_pixels(text, path="arialbd.ttf", fontsize=14):
 
 def display(arr):
     # result = np.where(arr, '#', ' ')
-    result = np.where(arr, "🕋", "⬜")
+    result = np.where(arr, "🥵", "🥶")
     print("\n".join(["".join(row) for row in result]))
 
 
-# for c in 'ABCDEFGHIJKLMNOPQRSTUVWXYZ':
-# for c in 'אבגדהוזחטיכלמנסעפצקרשת':
-for c in "בלם רוצה לראות מה עשיתי בפייתון?":
+message = "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
+message = "אבגדהוזחטיכלמנסעפצקרשת"
+message = "בלם רוצה לראות מה עשיתי בפייתון?"
+
+message = "הנה מצאתי תראי איזה מגניב"
+message = "לילה טוב"
+
+for c in message:
     if c == " ":
-        print(("⬜" * 12 + "\n") * 4, end="")
+        print(("🥶" * 12 + "\n") * 4, end="")
         continue
     arr = char_to_pixels(c, path="../Fonts/calibri.ttf", fontsize=18)
     # print(arr.shape)
     display(arr)
 
-print("⬜" * 12)
+print("🥶" * 12)
