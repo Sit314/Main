@@ -9,15 +9,21 @@ ORS_API_KEY = "5b3ce3597851110001cf6248254c8a63bf4c412793fc4d9f7079e78f"
 
 # Addresses
 addresses = {
-    "Sit": "Hasport 12, Haifa",
-    # "Blam": "Beit El 9, Haifa",
-    "Jonch": "Ider 43, Haifa",
+    "Sit": "הספורט 12, חיפה",
+    "Blam": "בית אל 9, חיפה",
+    "Jonch": "אידר 43, חיפה",
     # "Gersh": "HaYam Road 137, Haifa",
     # "Technion": "Malal 20, Haifa",
-    "Tal": "Hagalil 136, Haifa",
-    "Boga": "Aba Hillel Silver 111, Haifa",
-    "Sister Gersh": "Rabin 9, Kiryat Ata",
+    # "Tal": "Hagalil 136, Haifa",
+    "Tal": "גדליהו 33, חיפה",
+    # "Boga": "Aba Hillel Silver 111, Haifa",
+    # "Sister Gersh": "Rabin 9, Kiryat Ata",
+    "Tama": "הלל 20, חיפה",
+    "Mai": "R. do Bruxo 36, Portugal",
 }
+
+start_name = "Sit"
+end_name = "Tal"
 
 # Initialize geocoder and client
 geolocator = Nominatim(user_agent="haifa_map_app")
@@ -110,8 +116,8 @@ for i in range(len(overall_best_path) - 1):
 # Save the map
 haifa_map.save("2025_H1/haifa_tsp_any_start_path.html")
 
-start_idx = keys.index("Boga")
-end_idx = keys.index("Sister Gersh")
+start_idx = keys.index(start_name)
+end_idx = keys.index(end_name)
 
 middle_indices = [i for i in range(n) if i not in (start_idx, end_idx)]
 
@@ -123,7 +129,7 @@ for perm in permutations(middle_indices):
 
 paths_with_times.sort()
 
-print("\nAll paths from 'Boga' to 'Sister Gersh' sorted by total time:")
+print(f"\nAll paths from '{start_name}' to '{end_name}' sorted by total time:")
 for total_time, path in paths_with_times:
     path_names = " → ".join(keys[i] for i in path)
     print(f"{path_names}: {total_time:.1f} min")
