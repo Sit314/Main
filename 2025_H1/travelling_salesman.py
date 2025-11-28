@@ -1,4 +1,6 @@
 from itertools import permutations
+import json
+import os
 
 import folium
 import openrouteservice
@@ -6,37 +8,74 @@ from geopy.geocoders import Nominatim
 
 # Your OpenRouteService API key
 ORS_API_KEY = "5b3ce3597851110001cf6248254c8a63bf4c412793fc4d9f7079e78f"
+CACHE_FILE = "2025_H1/gps_cache.json"
 
 # Addresses
 addresses = {
     "Sit": "הספורט 12, חיפה",
     "Blam": "בית אל 9, חיפה",
     "Jonch": "אידר 43, חיפה",
-    # "Gersh": "HaYam Road 137, Haifa",
-    # "Technion": "Malal 20, Haifa",
-    # "Tal": "Hagalil 136, Haifa",
+    # "Gersh": "דרך הים 137, חיפה",
+    # "Technion": 'מל"ל 20, חיפה',
     "Tal": "גדליהו 33, חיפה",
-    # "Boga": "Aba Hillel Silver 111, Haifa",
-    # "Sister Gersh": "Rabin 9, Kiryat Ata",
+    # "Boga": "אבא הלל סילבר 111, חיפה",
+    # "Sister Gersh": "רבין 9, קרית אתא",
     "Tama": "הלל 20, חיפה",
-    "Mai": "R. do Bruxo 36, Portugal",
+    # "Mai": "R. do Bruxo 36, Portugal",
+    "Bottom": "נתנזון 20, חיפה",
 }
 
 start_name = "Sit"
-end_name = "Tal"
+end_name = "Bottom"
 
 # Initialize geocoder and client
 geolocator = Nominatim(user_agent="haifa_map_app")
 client = openrouteservice.Client(key=ORS_API_KEY)
 haifa_map = folium.Map(location=(32.81, 34.9896), zoom_start=14)
 
+
+# --- Caching Logic Start ---
+def load_cache():
+    if os.path.exists(CACHE_FILE):
+        try:
+            with open(CACHE_FILE, "r", encoding="utf-8") as f:
+                return json.load(f)
+        except json.JSONDecodeError:
+            return {}
+    return {}
+
+
+def save_cache(cache_data):
+    with open(CACHE_FILE, "w", encoding="utf-8") as f:
+        json.dump(cache_data, f, ensure_ascii=False, indent=4)
+
+
+# Load existing cache
+gps_cache = load_cache()
+# --- Caching Logic End ---
+
 # Geocode and place markers
 coords = {}
 for name, address in addresses.items():
-    location = geolocator.geocode(address)
-    if not location:
-        print(f"Failed for name {name}, address {address}")
-    latlon = (location.latitude, location.longitude)
+    # Check if address is already in cache
+    if address in gps_cache:
+        print(f"Using cached location for {name}")
+        latlon = tuple(gps_cache[address])
+    else:
+        # Not in cache, query the API
+        print(f"Geocoding {name} from API...")
+        location = geolocator.geocode(address)
+
+        if not location:
+            print(f"Failed for name {name}, address {address}")
+            continue  # Skip to next address if not found
+
+        latlon = (location.latitude, location.longitude)
+
+        # Update cache and save immediately
+        gps_cache[address] = latlon
+        save_cache(gps_cache)
+
     coords[name] = latlon
     folium.Marker(latlon, popup=f"{name}: {address}", tooltip=address).add_to(haifa_map)
 
@@ -75,12 +114,15 @@ for start in range(n):
     for perm in permutations(others):
         path = [start] + list(perm)
         total_time = sum(dist_matrix[path[i]][path[i + 1]] for i in range(len(path) - 1))
-        path_names = " → ".join(keys[i] for i in path)
-        print(f"{path_names}: {total_time:.1f} min")
+        # Optional: Print every single permutation (can be spammy if N is large)
+        # path_names = " → ".join(keys[i] for i in path)
+        # print(f"{path_names}: {total_time:.1f} min")
 
         if total_time < best_time_for_start:
             best_time_for_start = total_time
             best_path_for_start = path
+
+    print(f"Best path for start {keys[start]}: {best_time_for_start:.1f} min")
 
     # Update overall best path if better
     if best_time_for_start < overall_best_time:
@@ -116,20 +158,40 @@ for i in range(len(overall_best_path) - 1):
 # Save the map
 haifa_map.save("2025_H1/haifa_tsp_any_start_path.html")
 
-start_idx = keys.index(start_name)
-end_idx = keys.index(end_name)
+# Sort specific start/end paths
+if start_name in keys and end_name in keys:
+    start_idx = keys.index(start_name)
+    end_idx = keys.index(end_name)
 
-middle_indices = [i for i in range(n) if i not in (start_idx, end_idx)]
+    middle_indices = [i for i in range(n) if i not in (start_idx, end_idx)]
 
-paths_with_times = []
-for perm in permutations(middle_indices):
-    path = [start_idx] + list(perm) + [end_idx]
-    total_time = sum(dist_matrix[path[i]][path[i + 1]] for i in range(len(path) - 1))
-    paths_with_times.append((total_time, path))
+    paths_with_times = []
+    for perm in permutations(middle_indices):
+        path = [start_idx] + list(perm) + [end_idx]
+        total_time = sum(dist_matrix[path[i]][path[i + 1]] for i in range(len(path) - 1))
+        paths_with_times.append((total_time, path))
 
-paths_with_times.sort()
+    paths_with_times.sort()
 
-print(f"\nAll paths from '{start_name}' to '{end_name}' sorted by total time:")
-for total_time, path in paths_with_times:
-    path_names = " → ".join(keys[i] for i in path)
-    print(f"{path_names}: {total_time:.1f} min")
+    print(f"\nAll paths from '{start_name}' to '{end_name}' sorted by total time:")
+    num_paths = len(paths_with_times)
+
+    if num_paths <= 8:
+        # If list is short, print everything
+        for total_time, path in paths_with_times:
+            path_names = " → ".join(keys[i] for i in path)
+            print(f"{path_names}: {total_time:.1f} min")
+    else:
+        # Print first 4
+        for total_time, path in paths_with_times[:4]:
+            path_names = " → ".join(keys[i] for i in path)
+            print(f"{path_names}: {total_time:.1f} min")
+
+        print("...")
+
+        # Print last 4
+        for total_time, path in paths_with_times[-4:]:
+            path_names = " → ".join(keys[i] for i in path)
+            print(f"{path_names}: {total_time:.1f} min")
+else:
+    print(f"\nCould not run specific start/end sort: {start_name} or {end_name} not found in valid coordinates.")
